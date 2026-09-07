@@ -24,7 +24,7 @@ const fallbackQuestions = [
 const shuffle = items => [...items].sort(() => Math.random() - 0.5)
 function QuizApp({onHome,categoryId}){
  const isFullMock=categoryId==='exam-practice'; const [selectedDifficulty,setSelectedDifficulty]=React.useState('Mixed'); const bankQuestions=isFullMock?Object.values(questionBank).flat():(questionBank[categoryId]||[]); const pool=bankQuestions.length?bankQuestions:fallbackQuestions
- const questions=React.useMemo(()=>{const selected=selectedDifficulty==='Mixed'?pool:pool.filter(q=>q.difficulty===selectedDifficulty);const source=selected.length?selected:pool;return shuffle(source).slice(0,Math.min(isFullMock?50:10,source.length))},[categoryId,selectedDifficulty,isFullMock]);
+ const questions=React.useMemo(()=>{const selected=selectedDifficulty==='Mixed'?pool:pool.filter(q=>q.difficulty===selectedDifficulty);const source=selected.length?selected:pool;return shuffle(source).slice(0,Math.min(isFullMock?50:100,source.length))},[categoryId,selectedDifficulty,isFullMock]);
  const categoryName=categoryNames[categoryId]||'Computer Science'; const quizMinutes=isFullMock?60:difficultyConfig[selectedDifficulty].minutes; const quizSeconds=quizMinutes*60
  const [started,setStarted]=React.useState(false),[current,setCurrent]=React.useState(0),[answers,setAnswers]=React.useState({}),[marked,setMarked]=React.useState([]),[seconds,setSeconds]=React.useState(quizSeconds),[submitted,setSubmitted]=React.useState(false),[reviewFilter,setReviewFilter]=React.useState('all')
  React.useEffect(()=>{if(!started||submitted)return;const timer=setInterval(()=>setSeconds(v=>Math.max(v-1,0)),1000);return()=>clearInterval(timer)},[started,submitted]); React.useEffect(()=>{if(started&&seconds===0)setSubmitted(true)},[seconds,started])
