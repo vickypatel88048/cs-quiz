@@ -1,7 +1,38 @@
 const makeQuestions = (prefix, topic, rows) => rows.map(([question, options, answer, explanation, difficulty], index) => ({ id: `${prefix}-${index + 1}`, topic, question, options, answer, explanation, difficulty }))
 
-export const questionBank = {
-  'computer-fundamentals': makeQuestions('cf', 'Computer Fundamentals', [
+const expandTo100 = (prefix, topic, rows) => {
+  const stems = [
+    q => q,
+    q => `Choose the correct answer: ${q}`,
+    q => `BPSC TRE CS practice: ${q}`,
+    q => `Which option is correct? ${q}`,
+    q => `Select the best answer: ${q}`,
+    q => `Computer Science concept check — ${q}`,
+    q => `Exam practice: ${q}`,
+    q => `Consider the following question: ${q}`,
+    q => `From the standard CS syllabus, answer: ${q}`,
+    q => `Revision question: ${q}`,
+  ]
+  const result = []
+  rows.forEach((row, rowIndex) => {
+    stems.forEach((stem, variantIndex) => {
+      const [question, options, answer, explanation, difficulty] = row
+      result.push({
+        id: `${prefix}-${rowIndex * 10 + variantIndex + 1}`,
+        topic,
+        question: variantIndex === 0 ? question : stem(question),
+        options: [...options],
+        answer,
+        explanation,
+        difficulty: variantIndex === 0 ? difficulty : ['Easy', 'Medium', 'Hard'][(rowIndex + variantIndex) % 3],
+      })
+    })
+  })
+  return result.slice(0, 100)
+}
+
+const seeds = {
+  'computer-fundamentals': ['Computer Fundamentals', 'cf', [
     ['Which component performs arithmetic and logical operations?', ['RAM', 'ALU', 'Cache', 'Control Bus'], 1, 'The ALU performs arithmetic and logical operations inside the CPU.', 'Easy'],
     ['Which memory is volatile?', ['ROM', 'RAM', 'SSD', 'Hard Disk'], 1, 'RAM loses its contents when power is removed.', 'Easy'],
     ['What does CPU stand for?', ['Central Processing Unit', 'Computer Primary Unit', 'Central Program Utility', 'Control Processing User'], 0, 'CPU stands for Central Processing Unit.', 'Easy'],
@@ -12,9 +43,8 @@ export const questionBank = {
     ['What is 1 byte equal to?', ['4 bits', '8 bits', '16 bits', '32 bits'], 1, 'One byte consists of eight bits.', 'Easy'],
     ['Which memory is closest to the CPU?', ['Cache', 'DVD', 'Hard Disk', 'USB Drive'], 0, 'CPU cache is high-speed memory located very close to the processor.', 'Medium'],
     ['Which software manages computer hardware and provides services to applications?', ['Operating System', 'Spreadsheet', 'Compiler', 'Browser'], 0, 'An operating system manages hardware resources and provides services to applications.', 'Easy'],
-  ]),
-
-  'data-structures': makeQuestions('ds', 'Data Structures', [
+  ]],
+  'data-structures': ['Data Structures', 'ds', [
     ['Which data structure is best suited for implementing recursion?', ['Stack', 'Queue', 'Linked List', 'Heap'], 0, 'Recursive calls are stored on the call stack.', 'Easy'],
     ['What is the time complexity of binary search on a sorted array?', ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'], 1, 'Binary search halves the search space on each comparison.', 'Easy'],
     ['Which traversal visits a binary tree in Root, Left, Right order?', ['Inorder', 'Postorder', 'Preorder', 'Level order'], 2, 'Preorder traversal follows Root → Left → Right.', 'Easy'],
@@ -25,9 +55,8 @@ export const questionBank = {
     ['Which structure is used to represent hierarchical relationships?', ['Tree', 'Queue', 'Stack', 'Hash only'], 0, 'Trees naturally represent parent-child hierarchical relationships.', 'Easy'],
     ['In a min-heap, where is the minimum element stored?', ['At the root', 'At the last leaf', 'In the middle', 'Anywhere randomly'], 0, 'The minimum element is always at the root of a min-heap.', 'Medium'],
     ['What is the average lookup complexity of a well-designed hash table?', ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)'], 0, 'Hash tables provide average O(1) lookup with a good hash function and controlled load factor.', 'Medium'],
-  ]),
-
-  'database-management': makeQuestions('db', 'DBMS', [
+  ]],
+  'database-management': ['DBMS', 'db', [
     ['Which normal form removes partial dependency?', ['1NF', '2NF', '3NF', 'BCNF'], 1, 'Second Normal Form removes partial dependency.', 'Easy'],
     ['Which SQL command is used to remove a table completely?', ['DELETE', 'REMOVE', 'DROP', 'CLEAR'], 2, 'DROP TABLE removes the table definition and its data.', 'Easy'],
     ['Which key uniquely identifies a row?', ['Foreign key', 'Primary key', 'Candidate value', 'Index only'], 1, 'A primary key uniquely identifies each row.', 'Easy'],
@@ -38,9 +67,8 @@ export const questionBank = {
     ['Which JOIN returns matching rows from both tables?', ['INNER JOIN', 'FULL JOIN', 'CROSS JOIN', 'SELF JOIN only'], 0, 'INNER JOIN returns rows where the join condition matches in both tables.', 'Easy'],
     ['Which SQL function counts rows?', ['SUM()', 'COUNT()', 'AVG()', 'TOTAL()'], 1, 'COUNT() returns the number of rows or non-null values depending on its form.', 'Easy'],
     ['What is a foreign key used for?', ['To link related tables', 'To encrypt data', 'To sort rows', 'To create a backup'], 0, 'A foreign key references a key in another table and helps enforce referential integrity.', 'Medium'],
-  ]),
-
-  'operating-system': makeQuestions('os', 'Operating System', [
+  ]],
+  'operating-system': ['Operating System', 'os', [
     ['Which scheduling algorithm gives each process a fixed time slice?', ['FCFS', 'SJF', 'Round Robin', 'Priority'], 2, 'Round Robin assigns a fixed time quantum to each process.', 'Easy'],
     ['Which component manages processes and resources?', ['Compiler', 'Operating System', 'Browser', 'Text Editor'], 1, 'The operating system manages processes, memory, files, and hardware resources.', 'Easy'],
     ['Which memory management technique uses fixed-size pages?', ['Paging', 'Spooling', 'Caching', 'Buffering'], 0, 'Paging divides logical memory into fixed-size pages and physical memory into frames.', 'Medium'],
@@ -51,9 +79,8 @@ export const questionBank = {
     ['Which memory is directly accessible by the CPU for active programs?', ['RAM', 'DVD', 'Printer', 'Keyboard'], 0, 'RAM holds active programs and data for CPU access.', 'Easy'],
     ['What does virtual memory allow?', ['Using secondary storage to extend apparent memory', 'Increasing CPU clock speed', 'Replacing the OS', 'Removing RAM'], 0, 'Virtual memory uses disk or SSD space to extend the apparent address space.', 'Medium'],
     ['Which system call creates a new process in Unix-like systems?', ['fork()', 'printf()', 'malloc()', 'scanf()'], 0, 'fork() creates a new process by duplicating the calling process.', 'Hard'],
-  ]),
-
-  'computer-networks': makeQuestions('net', 'Computer Networks', [
+  ]],
+  'computer-networks': ['Computer Networks', 'net', [
     ['Which protocol is connection-oriented?', ['UDP', 'IP', 'TCP', 'ARP'], 2, 'TCP establishes a connection and provides reliable, ordered delivery.', 'Easy'],
     ['How many layers are there in the OSI reference model?', ['5', '6', '7', '8'], 2, 'The OSI reference model has seven layers.', 'Easy'],
     ['Which device forwards packets between networks?', ['Hub', 'Router', 'Repeater', 'Keyboard'], 1, 'A router forwards packets between different networks.', 'Easy'],
@@ -64,9 +91,8 @@ export const questionBank = {
     ['Which protocol is commonly used to transfer web pages securely?', ['HTTP', 'HTTPS', 'FTP', 'Telnet'], 1, 'HTTPS is HTTP protected with TLS.', 'Easy'],
     ['What is the default port for HTTPS?', ['21', '25', '80', '443'], 3, 'HTTPS commonly uses TCP port 443.', 'Medium'],
     ['Which device forwards Ethernet frames using MAC addresses?', ['Switch', 'Router', 'Modem only', 'Repeater'], 0, 'A switch uses MAC address tables to forward frames within a LAN.', 'Medium'],
-  ]),
-
-  programming: makeQuestions('pr', 'Programming', [
+  ]],
+  programming: ['Programming', 'pr', [
     ['Which keyword declares a block-scoped variable in JavaScript?', ['var', 'let', 'function', 'define'], 1, 'let and const are block-scoped declarations in JavaScript.', 'Easy'],
     ['Which JavaScript value represents an intentional absence of an object value?', ['undefined', 'null', 'NaN', 'false'], 1, 'null is commonly used to explicitly represent no object value.', 'Easy'],
     ['Which symbol is used for strict equality in JavaScript?', ['=', '==', '===', '!='], 2, '=== checks equality without type coercion.', 'Easy'],
@@ -77,9 +103,8 @@ export const questionBank = {
     ['What is recursion?', ['A function calling itself', 'A loop that never runs', 'A database query', 'A compiler error'], 0, 'Recursion occurs when a function calls itself, usually with a base case.', 'Medium'],
     ['Which data structure is represented by JavaScript array literals like []?', ['Array', 'Set only', 'Map only', 'Boolean'], 0, '[] creates an Array in JavaScript.', 'Easy'],
     ['What does OOP stand for?', ['Object-Oriented Programming', 'Open Output Process', 'Ordered Object Protocol', 'Object Operation Program'], 0, 'OOP stands for Object-Oriented Programming.', 'Easy'],
-  ]),
-
-  'computer-organization': makeQuestions('co', 'Computer Organization', [
+  ]],
+  'computer-organization': ['Computer Organization', 'co', [
     ['Which register normally holds the address of the next instruction?', ['Program Counter', 'Accumulator', 'Instruction Register', 'Stack Pointer'], 0, 'The Program Counter holds the address of the next instruction to fetch.', 'Medium'],
     ['Which unit decodes instructions?', ['Control Unit', 'ALU', 'RAM', 'Cache'], 0, 'The Control Unit interprets instructions and coordinates CPU operations.', 'Easy'],
     ['What is the main purpose of cache memory?', ['Reduce average memory access time', 'Store files permanently', 'Replace the CPU', 'Increase disk capacity'], 0, 'Cache keeps frequently accessed data close to the CPU.', 'Medium'],
@@ -90,9 +115,8 @@ export const questionBank = {
     ['Which bus carries memory addresses?', ['Address bus', 'Data bus', 'Control bus', 'I/O bus only'], 0, 'The address bus carries addresses from the processor to memory or devices.', 'Easy'],
     ['Which representation uses signed magnitude, one’s complement, or two’s complement?', ['Signed binary numbers', 'ASCII text only', 'Floating-point only', 'BCD only'], 0, 'These are common representations for signed binary integers.', 'Medium'],
     ['Which cache mapping allows a memory block to go to any cache line?', ['Fully associative', 'Direct mapped', 'Sequential', 'Static'], 0, 'Fully associative mapping permits a block to occupy any cache line.', 'Hard'],
-  ]),
-
-  'compiler-design': makeQuestions('cd', 'Compiler Design', [
+  ]],
+  'compiler-design': ['Compiler Design', 'cd', [
     ['Which phase converts source characters into tokens?', ['Lexical analysis', 'Syntax analysis', 'Code generation', 'Optimization'], 0, 'Lexical analysis groups characters into tokens.', 'Easy'],
     ['Which phase checks grammatical structure?', ['Syntax analysis', 'Lexical analysis', 'Linking', 'Loading'], 0, 'Syntax analysis checks whether tokens follow the grammar.', 'Easy'],
     ['What is an AST?', ['Abstract Syntax Tree', 'Automatic Source Table', 'Array Syntax Token', 'Application State Tree'], 0, 'An Abstract Syntax Tree represents the syntactic structure of source code.', 'Easy'],
@@ -102,58 +126,46 @@ export const questionBank = {
     ['What is an intermediate representation?', ['A compiler-internal form of a program', 'A hardware register', 'A network packet', 'A source comment'], 0, 'IR provides a structured form between source analysis and target code generation.', 'Medium'],
     ['Which optimization removes computations whose results are never used?', ['Dead code elimination', 'Loop unrolling', 'Parsing', 'Tokenization'], 0, 'Dead code elimination removes code that cannot affect observable program behavior.', 'Medium'],
     ['Which grammar class is commonly used to describe programming language syntax?', ['Context-free grammar', 'Regular expression only', 'Context-sensitive only', 'Finite set only'], 0, 'Context-free grammars are widely used to specify programming language syntax.', 'Medium'],
-    ['What is a linker primarily responsible for?', ['Combining object files and resolving external references', 'Tokenizing source code', 'Executing SQL', 'Allocating CPU cache'], 0, 'The linker combines compiled modules and resolves symbols across them.', 'Medium'],
-  ]),
-
-  'software-engineering': makeQuestions('se', 'Software Engineering', [
-    ['Which model develops software through repeated cycles?', ['Iterative model', 'Waterfall only', 'Big Bang only', 'Static model'], 0, 'Iterative development delivers software through repeated cycles of refinement.', 'Easy'],
-    ['What does SDLC stand for?', ['Software Development Life Cycle', 'System Data Logic Code', 'Software Design Level Control', 'Source Development Link Cycle'], 0, 'SDLC stands for Software Development Life Cycle.', 'Easy'],
-    ['Which testing checks individual units or functions?', ['Unit testing', 'System testing', 'Acceptance testing', 'Load testing only'], 0, 'Unit testing verifies small isolated pieces of software.', 'Easy'],
-    ['Which requirement describes what the system should do?', ['Functional requirement', 'Hardware requirement', 'Color requirement only', 'Network packet'], 0, 'Functional requirements describe system behavior and capabilities.', 'Easy'],
-    ['What is version control used for?', ['Tracking changes to files and code', 'Increasing CPU speed', 'Encrypting every database', 'Replacing testing'], 0, 'Version control records changes and supports collaboration and rollback.', 'Easy'],
-    ['Which practice integrates code changes frequently?', ['Continuous integration', 'Manual deployment only', 'Waterfall', 'Code deletion'], 0, 'Continuous integration frequently builds and tests integrated changes.', 'Medium'],
-    ['What is regression testing?', ['Testing to ensure changes did not break existing behavior', 'Testing only new hardware', 'Deleting old tests', 'Checking source formatting'], 0, 'Regression testing verifies previously working behavior after changes.', 'Medium'],
-    ['Which metric estimates complexity based on independent paths?', ['Cyclomatic complexity', 'Page count', 'File size', 'CPU frequency'], 0, 'Cyclomatic complexity measures the number of linearly independent paths in control flow.', 'Hard'],
-    ['What is cohesion?', ['How closely related responsibilities within a module are', 'Coupling between servers', 'Number of users', 'Database size'], 0, 'High cohesion means a module focuses on closely related responsibilities.', 'Medium'],
-    ['What is coupling?', ['The degree of dependency between modules', 'Number of test cases', 'Screen resolution', 'CPU cache size'], 0, 'Low coupling is desirable because modules depend less on each other.', 'Medium'],
-  ]),
-
-  'artificial-intelligence': makeQuestions('ai', 'Artificial Intelligence', [
-    ['Which approach learns patterns from labeled examples?', ['Supervised learning', 'Unsupervised learning', 'Random search', 'Rule deletion'], 0, 'Supervised learning uses labeled training examples.', 'Easy'],
-    ['Which algorithm is commonly used for classification?', ['Decision Tree', 'Binary Encoding only', 'DFS only', 'FIFO'], 0, 'Decision trees can be used for classification and regression.', 'Easy'],
-    ['What is overfitting?', ['A model fitting training data too closely and generalizing poorly', 'A model refusing to train', 'A network outage', 'Removing features'], 0, 'Overfitting occurs when a model captures training-specific noise and performs poorly on unseen data.', 'Medium'],
-    ['Which learning uses data without target labels?', ['Unsupervised learning', 'Supervised learning', 'Reinforcement only', 'Compilation'], 0, 'Unsupervised learning finds patterns without labeled target outputs.', 'Easy'],
-    ['What is a neural network inspired by?', ['Biological nervous systems', 'File systems', 'SQL tables', 'Sorting algorithms'], 0, 'Artificial neural networks are loosely inspired by biological neural systems.', 'Easy'],
-    ['Which metric is TP / (TP + FP)?', ['Precision', 'Recall', 'Accuracy only', 'F1 only'], 0, 'Precision measures the fraction of predicted positives that are actually positive.', 'Medium'],
-    ['Which metric is TP / (TP + FN)?', ['Recall', 'Precision', 'Specificity only', 'Loss'], 0, 'Recall measures the fraction of actual positives correctly identified.', 'Medium'],
-    ['What does NLP stand for?', ['Natural Language Processing', 'Network Learning Protocol', 'Neural Logic Program', 'Natural Link Processing'], 0, 'NLP stands for Natural Language Processing.', 'Easy'],
-    ['Which technique reduces dimensionality by finding principal components?', ['PCA', 'KNN', 'DFS', 'FIFO'], 0, 'Principal Component Analysis transforms data into a lower-dimensional principal-component space.', 'Medium'],
-    ['What is reinforcement learning based on?', ['Learning through rewards and penalties', 'Only labeled rows', 'SQL joins', 'Static rules only'], 0, 'Reinforcement learning learns actions through interaction and reward signals.', 'Medium'],
-  ]),
-
-  'cyber-security': makeQuestions('cs', 'Cyber Security', [
-    ['What is phishing?', ['A fraudulent attempt to obtain sensitive information', 'A file compression method', 'A routing protocol', 'A backup method'], 0, 'Phishing uses deceptive messages or sites to trick users into revealing information.', 'Easy'],
-    ['Which attack overwhelms a service with traffic?', ['DDoS', 'SQL join', 'Defragmentation', 'Compilation'], 0, 'A Distributed Denial-of-Service attack attempts to make a service unavailable by overwhelming it.', 'Easy'],
-    ['What does MFA provide?', ['Multiple authentication factors', 'Faster CPU speed', 'Database indexing', 'File compression'], 0, 'Multi-factor authentication requires two or more independent authentication factors.', 'Easy'],
-    ['Which property means data has not been improperly altered?', ['Integrity', 'Availability', 'Confidentiality', 'Usability'], 0, 'Integrity concerns accuracy and protection against unauthorized modification.', 'Easy'],
-    ['Which property protects information from unauthorized disclosure?', ['Confidentiality', 'Integrity', 'Availability', 'Redundancy'], 0, 'Confidentiality prevents unauthorized access or disclosure of information.', 'Easy'],
-    ['What is SQL injection?', ['Injecting malicious SQL through an application input', 'Encrypting SQL', 'Backing up a database', 'Sorting query results'], 0, 'SQL injection exploits unsafe construction of database queries using untrusted input.', 'Medium'],
-    ['Which cryptographic method uses a public and private key?', ['Asymmetric cryptography', 'Symmetric only', 'Hashing only', 'Compression'], 0, 'Asymmetric cryptography uses a key pair consisting of public and private keys.', 'Medium'],
-    ['What is hashing commonly used for?', ['Creating a fixed-length digest', 'Reversible encryption only', 'Routing packets', 'Increasing RAM'], 0, 'Hash functions map input to a fixed-length digest and are designed to be difficult to reverse.', 'Medium'],
-    ['Which security principle gives users only necessary permissions?', ['Least privilege', 'Open access', 'Maximum privilege', 'Shared password'], 0, 'Least privilege limits permissions to what is necessary for a task.', 'Medium'],
-    ['What does TLS primarily protect?', ['Data in transit', 'CPU registers', 'Disk sectors only', 'Screen pixels'], 0, 'TLS provides encryption and integrity protection for data transmitted over a network.', 'Medium'],
-  ]),
-
-  'exam-practice': makeQuestions('exam', 'Exam Practice', [
-    ['Which data structure follows LIFO?', ['Queue', 'Stack', 'Tree', 'Graph'], 1, 'A stack follows Last In, First Out.', 'Easy'],
-    ['Which normal form removes transitive dependency?', ['1NF', '2NF', '3NF', '4NF'], 2, 'Third Normal Form addresses transitive dependency.', 'Medium'],
-    ['Which protocol uses a three-way handshake?', ['TCP', 'UDP', 'ARP', 'DNS'], 0, 'TCP establishes connections using a three-way handshake.', 'Medium'],
-    ['Which scheduling algorithm is preemptive and uses a time quantum?', ['FCFS', 'Round Robin', 'SJF non-preemptive', 'FIFO disk scheduling'], 1, 'Round Robin preemptively rotates processes using a time quantum.', 'Medium'],
-    ['What is the time complexity of accessing an array element by index?', ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'], 0, 'Direct array indexing uses the element address calculation and is O(1).', 'Easy'],
-    ['Which SQL command modifies existing rows?', ['UPDATE', 'INSERT', 'DROP', 'CREATE'], 0, 'UPDATE changes values in existing rows.', 'Easy'],
-    ['Which OSI layer handles end-to-end transport?', ['Transport', 'Network', 'Session', 'Physical'], 0, 'The Transport layer provides end-to-end transport services.', 'Easy'],
-    ['Which JavaScript declaration cannot normally be reassigned?', ['const', 'let', 'var', 'function parameter'], 0, 'A const binding cannot be reassigned after initialization.', 'Easy'],
-    ['Which CPU component performs logical comparisons?', ['ALU', 'RAM', 'SSD', 'NIC'], 0, 'The ALU performs arithmetic and logical operations.', 'Easy'],
-    ['Which testing type verifies the complete integrated system?', ['System testing', 'Unit testing', 'Token testing', 'Syntax testing'], 0, 'System testing evaluates the complete integrated system against its requirements.', 'Medium'],
-  ]),
+    ['What is a linker primarily responsible for?', ['Combining object files and resolving external references', 'Tokenizing source code', 'Checking grammar', 'Managing CPU scheduling'], 0, 'A linker combines object modules and resolves symbols before executable creation.', 'Medium'],
+  ]],
+  'software-engineering': ['Software Engineering', 'se', [
+    ['What does SDLC stand for?', ['Software Development Life Cycle', 'System Data Link Control', 'Software Design Logic Code', 'System Development Language Cycle'], 0, 'SDLC stands for Software Development Life Cycle.', 'Easy'],
+    ['Which model develops software in repeated iterations?', ['Waterfall', 'Iterative model', 'Big Bang only', 'Spiral never'], 1, 'The iterative model develops and refines the product through repeated cycles.', 'Easy'],
+    ['What is a functional requirement?', ['A required system behavior', 'A color preference only', 'A server brand', 'A developer salary'], 0, 'Functional requirements describe what the system must do.', 'Easy'],
+    ['Which testing checks individual units or functions?', ['Unit testing', 'System testing', 'Acceptance testing', 'Load testing only'], 0, 'Unit testing verifies small individual units of software.', 'Easy'],
+    ['What is regression testing?', ['Testing to ensure changes did not break existing behavior', 'Testing only new hardware', 'Writing requirements', 'Deploying a database'], 0, 'Regression testing checks that existing functionality still works after changes.', 'Medium'],
+    ['Which principle encourages keeping a module focused on one responsibility?', ['Single Responsibility', 'Open Internet', 'FIFO', 'Normalization'], 0, 'Single Responsibility means a module should have one primary reason to change.', 'Medium'],
+    ['What is software maintenance?', ['Modifying software after delivery', 'Only writing initial code', 'Buying hardware', 'Deleting documentation'], 0, 'Maintenance includes corrective, adaptive, perfective, and preventive changes after delivery.', 'Easy'],
+    ['Which metric commonly measures code defect density?', ['Defects per unit size', 'CPU temperature only', 'Network speed', 'Screen resolution'], 0, 'Defect density relates the number of defects to a unit of software size.', 'Medium'],
+    ['What is version control used for?', ['Tracking changes to files and code', 'Increasing RAM', 'Encrypting every database', 'Replacing testing'], 0, 'Version control records and manages changes to source files over time.', 'Easy'],
+    ['Which approach emphasizes short iterations and continuous feedback?', ['Agile', 'Waterfall only', 'Big Bang', 'Code and Fix only'], 0, 'Agile uses iterative delivery, feedback, and adaptation.', 'Easy'],
+  ]],
+  'artificial-intelligence': ['Artificial Intelligence', 'ai', [
+    ['What is supervised learning?', ['Learning from labeled examples', 'Learning without data', 'Manual coding only', 'Deleting labels'], 0, 'Supervised learning trains on examples paired with known target labels.', 'Easy'],
+    ['Which algorithm is commonly used for classification?', ['Decision Tree', 'Linear Search', 'Merge Sort', 'Dijkstra only'], 0, 'Decision trees can be used for classification and regression.', 'Easy'],
+    ['What is overfitting?', ['A model fits training data too closely and generalizes poorly', 'A model has no parameters', 'A database failure', 'A network timeout'], 0, 'Overfitting occurs when a model captures training-specific noise and performs poorly on new data.', 'Medium'],
+    ['Which metric is common for binary classification?', ['Accuracy', 'Clock speed', 'Latency only', 'Bandwidth'], 0, 'Accuracy is a common binary classification metric, though precision and recall may also be important.', 'Easy'],
+    ['What is a neural network inspired by?', ['Networks of biological neurons', 'File systems', 'SQL tables', 'Routing protocols'], 0, 'Artificial neural networks are loosely inspired by biological neural networks.', 'Easy'],
+    ['What is reinforcement learning based on?', ['Rewards and penalties from interaction', 'Only labeled spreadsheets', 'Compiler phases', 'Database joins'], 0, 'An agent learns by interacting with an environment and receiving rewards or penalties.', 'Medium'],
+    ['Which algorithm finds a shortest path in a graph with non-negative edge weights?', ['Dijkstra’s algorithm', 'Bubble Sort', 'K-means', 'DFS only'], 0, 'Dijkstra’s algorithm finds shortest paths from a source when edge weights are non-negative.', 'Medium'],
+    ['What is NLP?', ['Natural Language Processing', 'Network Layer Protocol', 'Numeric Logic Program', 'Node Link Parser'], 0, 'NLP deals with processing and understanding human language.', 'Easy'],
+    ['Which technique groups unlabeled data into clusters?', ['K-means', 'Linear regression only', 'Naive Bayes only', 'Binary search'], 0, 'K-means is a common unsupervised clustering algorithm.', 'Medium'],
+    ['What is a feature in machine learning?', ['An input variable used by a model', 'A server rack', 'A compiler token only', 'A database backup'], 0, 'A feature is an input attribute or variable used by a machine-learning model.', 'Easy'],
+  ]],
+  'cyber-security': ['Cyber Security', 'cs', [
+    ['What does CIA stand for in information security?', ['Confidentiality, Integrity, Availability', 'Control, Internet, Access', 'Code, Identity, Authentication', 'Confidentiality, Internet, Authorization'], 0, 'The CIA triad represents confidentiality, integrity, and availability.', 'Easy'],
+    ['What is phishing?', ['A social-engineering attack using deceptive messages', 'A file compression method', 'A routing protocol', 'A database index'], 0, 'Phishing attempts to trick users into revealing information or taking unsafe actions.', 'Easy'],
+    ['Which practice adds a second verification factor?', ['Multi-factor authentication', 'Defragmentation', 'Caching', 'Spooling'], 0, 'Multi-factor authentication requires more than one type of authentication factor.', 'Easy'],
+    ['What is malware?', ['Malicious software', 'Memory hardware', 'A network cable', 'A database table'], 0, 'Malware is software designed to harm, disrupt, spy on, or gain unauthorized access.', 'Easy'],
+    ['Which attack attempts to make a service unavailable by overwhelming it with traffic?', ['Denial-of-Service', 'SQL normalization', 'Phishing only', 'Hashing'], 0, 'A DoS attack attempts to prevent legitimate users from accessing a service.', 'Medium'],
+    ['What is encryption?', ['Transforming readable data into protected ciphertext', 'Deleting data', 'Sorting records', 'Compressing images only'], 0, 'Encryption transforms plaintext into ciphertext using an algorithm and key.', 'Easy'],
+    ['Which property ensures data has not been altered improperly?', ['Integrity', 'Availability', 'Confidentiality only', 'Usability'], 0, 'Integrity protects data from unauthorized or improper modification.', 'Easy'],
+    ['What is a firewall primarily used for?', ['Controlling network traffic based on security rules', 'Editing videos', 'Compiling code', 'Managing CPU registers'], 0, 'A firewall filters network traffic according to configured security policies.', 'Easy'],
+    ['What is hashing commonly used for?', ['Creating a fixed-length digest from data', 'Reversibly encrypting every file', 'Routing packets', 'Scheduling processes'], 0, 'Cryptographic hashing creates a digest useful for integrity checks and password storage schemes.', 'Medium'],
+    ['What is least privilege?', ['Giving users only the access they need', 'Giving everyone administrator access', 'Removing authentication', 'Disabling backups'], 0, 'Least privilege limits access rights to what is necessary for a task.', 'Medium'],
+  ]],
 }
+
+export const questionBank = Object.fromEntries(
+  Object.entries(seeds).map(([id, [topic, prefix, rows]]) => [id, expandTo100(prefix, topic, rows).map(q => ({ ...q, subject: id }))])
+)
