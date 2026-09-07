@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, BrainCircuit, Check, Clock3, Flag, Menu, RotateCcw, X } from 'lucide-react'
+import Categories from './Categories'
 import './styles.css'
 import './quiz.css'
 
@@ -17,25 +18,18 @@ const questions = [
   { id: 10, topic: 'Computer Networks', question: 'How many layers are there in the OSI reference model?', options: ['5', '6', '7', '8'], answer: 2, explanation: 'The OSI model has seven layers: Physical, Data Link, Network, Transport, Session, Presentation and Application.' },
 ]
 
-function App() {
+function QuizApp() {
   const [started, setStarted] = React.useState(false)
   const [current, setCurrent] = React.useState(0)
   const [answers, setAnswers] = React.useState({})
   const [marked, setMarked] = React.useState([])
-  const [seconds, setSeconds] = React.useState(10 * 60)
+  const [seconds, setSeconds] = React.useState(600)
   const [submitted, setSubmitted] = React.useState(false)
   const [menuOpen, setMenuOpen] = React.useState(false)
   const [reviewFilter, setReviewFilter] = React.useState('all')
 
-  React.useEffect(() => {
-    if (!started || submitted) return
-    const timer = setInterval(() => setSeconds(value => Math.max(value - 1, 0)), 1000)
-    return () => clearInterval(timer)
-  }, [started, submitted])
-
-  React.useEffect(() => {
-    if (started && seconds === 0) setSubmitted(true)
-  }, [seconds, started])
+  React.useEffect(() => { if (!started || submitted) return; const timer = setInterval(() => setSeconds(value => Math.max(value - 1, 0)), 1000); return () => clearInterval(timer) }, [started, submitted])
+  React.useEffect(() => { if (started && seconds === 0) setSubmitted(true) }, [seconds, started])
 
   const question = questions[current]
   const answered = Object.keys(answers).length
@@ -43,65 +37,20 @@ function App() {
   const incorrect = questions.reduce((total, item, index) => total + (answers[index] !== undefined && answers[index] !== item.answer ? 1 : 0), 0)
   const skipped = questions.length - answered
   const formatTime = value => `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
-
-  const choose = index => setAnswers(prev => ({ ...prev, [current]: index }))
-  const toggleMark = () => setMarked(prev => prev.includes(current) ? prev.filter(i => i !== current) : [...prev, current])
   const reset = () => { setStarted(false); setCurrent(0); setAnswers({}); setMarked([]); setSeconds(600); setSubmitted(false); setReviewFilter('all') }
 
   if (submitted) {
     const percentage = Math.round((score / questions.length) * 100)
     const performance = percentage >= 80 ? 'Excellent performance!' : percentage >= 60 ? 'Good job — keep improving.' : percentage >= 40 ? 'Nice attempt — more practice will help.' : 'Keep practicing — you will improve.'
-    const filteredQuestions = questions.filter((item, index) => {
-      if (reviewFilter === 'correct') return answers[index] === item.answer
-      if (reviewFilter === 'incorrect') return answers[index] !== undefined && answers[index] !== item.answer
-      if (reviewFilter === 'skipped') return answers[index] === undefined
-      return true
-    })
-
-    return <div className="quiz-app">
-      <header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a></header>
-      <main className="result-page">
-        <section className="result-hero">
-          <div className="result-kicker">QUIZ COMPLETED</div>
-          <div className="score-ring"><strong>{percentage}%</strong><span>Your score</span></div>
-          <h1>{performance}</h1>
-          <p>You scored <b>{score}</b> out of <b>{questions.length}</b>. Review your answers below to identify what to study next.</p>
-          <div className="result-stats">
-            <div><strong>{score}</strong><span>Correct</span></div><div><strong>{incorrect}</strong><span>Incorrect</span></div><div><strong>{skipped}</strong><span>Skipped</span></div><div><strong>{formatTime(600 - seconds)}</strong><span>Time used</span></div>
-          </div>
-          <div className="result-actions"><button className="primary-btn" onClick={reset}><RotateCcw size={17} /> Try again</button><button className="secondary-btn" onClick={reset}><ArrowLeft size={17} /> Back to quiz</button></div>
-        </section>
-
-        <section className="review-section">
-          <div className="review-heading"><div><span className="result-kicker">ANSWER REVIEW</span><h2>Review your performance</h2><p>Check every answer and understand why it is correct.</p></div></div>
-          <div className="review-tabs">
-            {[['all', 'All', questions.length], ['correct', 'Correct', score], ['incorrect', 'Incorrect', incorrect], ['skipped', 'Skipped', skipped]].map(([key, label, count]) => <button key={key} className={reviewFilter === key ? 'active' : ''} onClick={() => setReviewFilter(key)}>{label}<span>{count}</span></button>)}
-          </div>
-          <div className="review-list">
-            {filteredQuestions.map(item => {
-              const index = item.id - 1
-              const userAnswer = answers[index]
-              const isCorrect = userAnswer === item.answer
-              const isSkipped = userAnswer === undefined
-              return <article className={`review-item ${isCorrect ? 'review-correct' : isSkipped ? 'review-skipped' : 'review-incorrect'}`} key={item.id}>
-                <div className="review-item-top"><span className="review-number">Q{item.id}</span><span className="question-label">{item.topic}</span><span className="review-status">{isCorrect ? <><Check size={14} /> Correct</> : isSkipped ? <><Flag size={14} /> Skipped</> : <><X size={14} /> Incorrect</>}</span></div>
-                <h3>{item.question}</h3>
-                <div className="review-answers"><div className={isCorrect ? 'review-answer correct-answer' : 'review-answer'}><span>Your answer</span><strong>{isSkipped ? 'Not answered' : `${String.fromCharCode(65 + userAnswer)}. ${item.options[userAnswer]}`}</strong></div><div className="review-answer correct-answer"><span>Correct answer</span><strong>{String.fromCharCode(65 + item.answer)}. {item.options[item.answer]}</strong></div></div>
-                <div className="explanation"><strong>Explanation</strong><p>{item.explanation}</p></div>
-              </article>
-            })}
-          </div>
-          {!filteredQuestions.length && <div className="empty-review">No questions in this category.</div>}
-        </section>
-      </main>
-    </div>
+    const filteredQuestions = questions.filter((item, index) => reviewFilter === 'correct' ? answers[index] === item.answer : reviewFilter === 'incorrect' ? answers[index] !== undefined && answers[index] !== item.answer : reviewFilter === 'skipped' ? answers[index] === undefined : true)
+    return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a></header><main className="result-page"><section className="result-hero"><div className="result-kicker">QUIZ COMPLETED</div><div className="score-ring"><strong>{percentage}%</strong><span>Your score</span></div><h1>{performance}</h1><p>You scored <b>{score}</b> out of <b>{questions.length}</b>. Review your answers below to identify what to study next.</p><div className="result-stats"><div><strong>{score}</strong><span>Correct</span></div><div><strong>{incorrect}</strong><span>Incorrect</span></div><div><strong>{skipped}</strong><span>Skipped</span></div><div><strong>{formatTime(600 - seconds)}</strong><span>Time used</span></div></div><div className="result-actions"><button className="primary-btn" onClick={reset}><RotateCcw size={17} /> Try again</button><button className="secondary-btn" onClick={reset}><ArrowLeft size={17} /> Back to quiz</button></div></section><section className="review-section"><div className="review-heading"><div><span className="result-kicker">ANSWER REVIEW</span><h2>Review your performance</h2><p>Check every answer and understand why it is correct.</p></div></div><div className="review-tabs">{[['all','All',questions.length],['correct','Correct',score],['incorrect','Incorrect',incorrect],['skipped','Skipped',skipped]].map(([key,label,count]) => <button key={key} className={reviewFilter === key ? 'active' : ''} onClick={() => setReviewFilter(key)}>{label}<span>{count}</span></button>)}</div><div className="review-list">{filteredQuestions.map(item => { const index = item.id - 1; const userAnswer = answers[index]; const isCorrect = userAnswer === item.answer; const isSkipped = userAnswer === undefined; return <article className={`review-item ${isCorrect ? 'review-correct' : isSkipped ? 'review-skipped' : 'review-incorrect'}`} key={item.id}><div className="review-item-top"><span className="review-number">Q{item.id}</span><span className="question-label">{item.topic}</span><span className="review-status">{isCorrect ? <><Check size={14} /> Correct</> : isSkipped ? <><Flag size={14} /> Skipped</> : <><X size={14} /> Incorrect</>}</span></div><h3>{item.question}</h3><div className="review-answers"><div className="review-answer"><span>Your answer</span><strong>{isSkipped ? 'Not answered' : `${String.fromCharCode(65 + userAnswer)}. ${item.options[userAnswer]}`}</strong></div><div className="review-answer correct-answer"><span>Correct answer</span><strong>{String.fromCharCode(65 + item.answer)}. {item.options[item.answer]}</strong></div></div><div className="explanation"><strong>Explanation</strong><p>{item.explanation}</p></div></article> })}</div>{!filteredQuestions.length && <div className="empty-review">No questions in this category.</div>}</section></main></div>
   }
 
-  if (!started) {
-    return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><nav className={menuOpen ? 'quiz-nav open' : 'quiz-nav'}><a href="#top">Home</a><a href="#quiz">Quizzes</a><a href="#about">About</a></nav><button className="quiz-menu" onClick={() => setMenuOpen(v => !v)}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button></header><main className="quiz-start" id="quiz"><div className="start-copy"><div className="eyebrow"><BrainCircuit size={15} /> Interactive practice</div><h1>Test your <span>Computer Science</span> knowledge.</h1><p>10 carefully selected questions covering DSA, DBMS, Operating Systems, Networks and Programming.</p><div className="start-details"><div><Clock3 size={18} /><span><b>10 min</b> time limit</span></div><div><Flag size={18} /><span><b>10</b> questions</span></div><div><Check size={18} /><span><b>Instant</b> results</span></div></div><button className="primary-btn large" onClick={() => setStarted(true)}>Start quiz <ArrowRight size={18} /></button></div><div className="preview-card"><div className="preview-top"><span>QUIZ PREVIEW</span><b>10 QUESTIONS</b></div><div className="preview-progress"><span></span></div><small>Question 1 of 10</small><h3>{questions[0].question}</h3>{questions[0].options.map((option, index) => <div className="preview-option" key={option}><b>{String.fromCharCode(65 + index)}</b>{option}</div>)}</div></main><section className="quiz-note" id="about"><strong>One rule:</strong> answer honestly. Your result is meant to show you what to learn next.</section></div>
-  }
+  if (!started) return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><nav className={menuOpen ? 'quiz-nav open' : 'quiz-nav'}><a href="#top">Home</a><a href="#quiz">Quizzes</a><a href="#about">About</a></nav><button className="quiz-menu" onClick={() => setMenuOpen(v => !v)}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button></header><main className="quiz-start" id="quiz"><div className="start-copy"><div className="eyebrow"><BrainCircuit size={15} /> Interactive practice</div><h1>Test your <span>Computer Science</span> knowledge.</h1><p>10 carefully selected questions covering DSA, DBMS, Operating Systems, Networks and Programming.</p><div className="start-details"><div><Clock3 size={18} /><span><b>10 min</b> time limit</span></div><div><Flag size={18} /><span><b>10</b> questions</span></div><div><Check size={18} /><span><b>Instant</b> results</span></div></div><button className="primary-btn large" onClick={() => setStarted(true)}>Start quiz <ArrowRight size={18} /></button></div><div className="preview-card"><div className="preview-top"><span>QUIZ PREVIEW</span><b>10 QUESTIONS</b></div><div className="preview-progress"><span></span></div><small>Question 1 of 10</small><h3>{questions[0].question}</h3>{questions[0].options.map((option, index) => <div className="preview-option" key={option}><b>{String.fromCharCode(65 + index)}</b>{option}</div>)}</div></main><section className="quiz-note" id="about"><strong>One rule:</strong> answer honestly. Your result is meant to show you what to learn next.</section></div>
 
-  return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><div className="live-meta"><span>Question {current + 1} / {questions.length}</span><span className={seconds < 60 ? 'timer danger' : 'timer'}><Clock3 size={16} /> {formatTime(seconds)}</span></div></header><main className="quiz-layout"><section className="question-panel"><div className="question-top"><div><span className="question-label">{question.topic}</span><p>Question {current + 1} of {questions.length}</p></div><button className={marked.includes(current) ? 'mark-btn marked' : 'mark-btn'} onClick={toggleMark}><Flag size={16} /> {marked.includes(current) ? 'Marked' : 'Mark for review'}</button></div><div className="progress-line"><span style={{ width: `${((current + 1) / questions.length) * 100}%` }}></span></div><h1>{question.question}</h1><div className="answers">{question.options.map((option, index) => <button className={answers[current] === index ? 'answer selected' : 'answer'} onClick={() => choose(index)} key={option}><span>{String.fromCharCode(65 + index)}</span><strong>{option}</strong>{answers[current] === index && <Check size={18} />}</button>)}</div><div className="question-nav"><button className="secondary-btn" disabled={current === 0} onClick={() => setCurrent(v => v - 1)}><ArrowLeft size={17} /> Previous</button>{current === questions.length - 1 ? <button className="primary-btn" onClick={() => setSubmitted(true)}>Submit quiz <Check size={17} /></button> : <button className="primary-btn" onClick={() => setCurrent(v => v + 1)}>Next question <ArrowRight size={17} /></button>}</div></section><aside className="question-sidebar"><div className="sidebar-head"><span>QUESTIONS</span><strong>{answered}/{questions.length}</strong></div><div className="question-grid">{questions.map((item, index) => <button className={`${answers[index] !== undefined ? 'answered ' : ''}${index === current ? 'current ' : ''}${marked.includes(index) ? 'review' : ''}`} onClick={() => setCurrent(index)} key={item.id}>{index + 1}</button>)}</div><div className="legend"><span><i className="dot answered-dot"></i>Answered</span><span><i className="dot review-dot"></i>Review</span><span><i className="dot"></i>Not visited</span></div><button className="submit-side" onClick={() => setSubmitted(true)}>Submit quiz</button></aside></main></div>
+  return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><div className="live-meta"><span>Question {current + 1} / {questions.length}</span><span className={seconds < 60 ? 'timer danger' : 'timer'}><Clock3 size={16} /> {formatTime(seconds)}</span></div></header><main className="quiz-layout"><section className="question-panel"><div className="question-top"><div><span className="question-label">{question.topic}</span><p>Question {current + 1} of {questions.length}</p></div><button className={marked.includes(current) ? 'mark-btn marked' : 'mark-btn'} onClick={() => setMarked(v => v.includes(current) ? v.filter(i => i !== current) : [...v, current])}><Flag size={16} /> {marked.includes(current) ? 'Marked' : 'Mark for review'}</button></div><div className="progress-line"><span style={{ width: `${((current + 1) / questions.length) * 100}%` }}></span></div><h1>{question.question}</h1><div className="answers">{question.options.map((option, index) => <button className={answers[current] === index ? 'answer selected' : 'answer'} onClick={() => setAnswers(prev => ({ ...prev, [current]: index }))} key={option}><span>{String.fromCharCode(65 + index)}</span><strong>{option}</strong>{answers[current] === index && <Check size={18} />}</button>)}</div><div className="question-nav"><button className="secondary-btn" disabled={current === 0} onClick={() => setCurrent(v => v - 1)}><ArrowLeft size={17} /> Previous</button>{current === questions.length - 1 ? <button className="primary-btn" onClick={() => setSubmitted(true)}>Submit quiz <Check size={17} /></button> : <button className="primary-btn" onClick={() => setCurrent(v => v + 1)}>Next question <ArrowRight size={17} /></button>}</div></section><aside className="question-sidebar"><div className="sidebar-head"><span>QUESTIONS</span><strong>{answered}/{questions.length}</strong></div><div className="question-grid">{questions.map((item, index) => <button className={`${answers[index] !== undefined ? 'answered ' : ''}${index === current ? 'current ' : ''}${marked.includes(index) ? 'review' : ''}`} onClick={() => setCurrent(index)} key={item.id}>{index + 1}</button>)}</div><div className="legend"><span><i className="dot answered-dot"></i>Answered</span><span><i className="dot review-dot"></i>Review</span><span><i className="dot"></i>Not visited</span></div><button className="submit-side" onClick={() => setSubmitted(true)}>Submit quiz</button></aside></main></div>
 }
+
+function App() { const [view, setView] = React.useState('categories'); return view === 'quiz' ? <QuizApp /> : <Categories onStart={() => setView('quiz')} /> }
 
 createRoot(document.getElementById('root')).render(<App />)
