@@ -22,9 +22,15 @@ const fallbackQuestions = [
 {id:'fallback-4',topic:'Computer Science',question:'Which component performs arithmetic and logical operations?',options:['RAM','ALU','Cache','ROM'],answer:1,explanation:'The ALU performs arithmetic and logical operations inside the CPU.',difficulty:'Easy'},
 {id:'fallback-5',topic:'Computer Science',question:'How many layers are in the OSI reference model?',options:['5','6','7','8'],answer:2,explanation:'The OSI reference model has seven layers.',difficulty:'Easy'}]
 const shuffle = items => [...items].sort(() => Math.random() - 0.5)
+const shuffleQuestion = q => {
+  const optionsWithIndex = q.options.map((option, index) => ({ option, index }))
+  const shuffledOptions = shuffle(optionsWithIndex)
+  return { ...q, options: shuffledOptions.map(item => item.option), answer: shuffledOptions.findIndex(item => item.index === q.answer) }
+}
+const prepareQuestions = pool => shuffle(pool).map(shuffleQuestion)
 function QuizApp({onHome,categoryId}){
  const isFullMock=categoryId==='exam-practice'; const bankQuestions=isFullMock?Object.values(questionBank).flat():(questionBank[categoryId]||[]); const pool=bankQuestions.length?bankQuestions:fallbackQuestions
- const [quizMinutes,setQuizMinutes]=React.useState(isFullMock?60:20); const [timeInput,setTimeInput]=React.useState(String(isFullMock?60:20)); const questions=React.useMemo(()=>shuffle(pool).slice(0,Math.min(isFullMock?50:100,pool.length)),[categoryId,isFullMock]);
+ const [quizMinutes,setQuizMinutes]=React.useState(isFullMock?60:20); const [timeInput,setTimeInput]=React.useState(String(isFullMock?60:20)); const questions=React.useMemo(()=>prepareQuestions(pool).slice(0,Math.min(isFullMock?50:100,pool.length)),[categoryId,isFullMock]);
  const quizSeconds=quizMinutes*60
  const [started,setStarted]=React.useState(false),[current,setCurrent]=React.useState(0),[answers,setAnswers]=React.useState({}),[marked,setMarked]=React.useState([]),[seconds,setSeconds]=React.useState(quizSeconds),[submitted,setSubmitted]=React.useState(false),[reviewFilter,setReviewFilter]=React.useState('all')
  React.useEffect(()=>{if(!started||submitted)return;const timer=setInterval(()=>setSeconds(v=>Math.max(v-1,0)),1000);return()=>clearInterval(timer)},[started,submitted]); React.useEffect(()=>{if(started&&seconds===0)setSubmitted(true)},[seconds,started])
