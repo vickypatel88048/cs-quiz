@@ -28,17 +28,15 @@ export const translations = {
 }
 
 export function t(lang, value) {
-  if (lang === 'hi' && translations.hi[value]) return translations.hi[value]
-  return value
+  return lang === 'hi' && translations.hi[value] ? translations.hi[value] : value
 }
 
 export function LanguageToggle({ lang, onChange }) {
-  const isHindi = lang === 'hi'
   return (
     <div className="language-switch" role="group" aria-label="Language selector">
-      <span className="language-label">भाषा / Language</span>
-      <button type="button" className={`language-option ${!isHindi ? 'active' : ''}`} onClick={() => onChange('en')} aria-pressed={!isHindi}>EN</button>
-      <button type="button" className={`language-option ${isHindi ? 'active' : ''}`} onClick={() => onChange('hi')} aria-pressed={isHindi}>हिंदी</button>
+      <button type="button" className={`language-option ${lang === 'en' ? 'active' : ''}`} onClick={() => onChange('en')} aria-pressed={lang === 'en'}>EN</button>
+      <span className="language-divider" aria-hidden="true" />
+      <button type="button" className={`language-option ${lang === 'hi' ? 'active' : ''}`} onClick={() => onChange('hi')} aria-pressed={lang === 'hi'}>हिंदी</button>
     </div>
   )
 }
