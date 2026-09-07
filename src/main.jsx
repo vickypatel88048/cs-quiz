@@ -45,8 +45,9 @@ function QuizApp({ onHome, categoryId }) {
   const bankQuestions = questionBank[categoryId] || []
   const pool = bankQuestions.length ? bankQuestions : fallbackQuestions
   const questions = React.useMemo(() => {
-    const filtered = selectedDifficulty === 'Mixed' ? pool : pool.filter(q => q.difficulty === selectedDifficulty)
-    return shuffle(filtered).slice(0, Math.min(10, filtered.length))
+    const selected = selectedDifficulty === 'Mixed' ? pool : pool.filter(q => q.difficulty === selectedDifficulty)
+    const source = selected.length ? selected : pool
+    return shuffle(source).slice(0, Math.min(10, source.length))
   }, [categoryId, selectedDifficulty])
   const categoryName = categoryNames[categoryId] || 'Computer Science'
   const quizMinutes = difficultyConfig[selectedDifficulty].minutes
@@ -73,7 +74,7 @@ function QuizApp({ onHome, categoryId }) {
   const startQuiz = () => { setSeconds(quizSeconds); setStarted(true) }
   const reset = () => { setStarted(false); setCurrent(0); setAnswers({}); setMarked([]); setSeconds(quizSeconds); setSubmitted(false); setReviewFilter('all') }
 
-  if (!question) return null
+  if (!question) return <div className="quiz-app"><header className="quiz-header"><button className="brand brand-button" onClick={onHome}><span className="brand-mark"><BrainCircuit size={21}/></span><span>CS<span className="brand-accent">Quiz</span></span></button><div className="quiz-title">{categoryName} Practice</div></header><main className="result-page"><section className="result-hero"><h1>No questions available</h1><p>Please choose another category or difficulty.</p><button className="primary-btn" onClick={onHome}><ArrowLeft size={17}/> Back to categories</button></section></main></div>
 
   if (submitted) {
     const percentage = total ? Math.round(score / total * 100) : 0
