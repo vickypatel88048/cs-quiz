@@ -25,7 +25,6 @@ export default function Home({ onStart, onCategories }) {
         <button onClick={() => { closeMenu(); onCategories() }}>Subjects</button>
         <a href="#features" onClick={closeMenu}>Features</a>
         <a href="#about" onClick={closeMenu}>About</a>
-        <button className="home-admin-btn" onClick={openAdmin}><Settings size={14} /> Admin</button>
       </nav>
       <div className="home-nav-actions">
         <button className="home-admin-btn home-admin-visible" onClick={openAdmin}><Settings size={14} /> Admin</button>
