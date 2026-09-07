@@ -5,16 +5,16 @@ import './styles.css'
 import './quiz.css'
 
 const questions = [
-  { id: 1, topic: 'Data Structures', question: 'Which data structure is best suited for implementing recursion?', options: ['Stack', 'Queue', 'Linked List', 'Heap'], answer: 0 },
-  { id: 2, topic: 'Data Structures', question: 'What is the time complexity of binary search on a sorted array?', options: ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'], answer: 1 },
-  { id: 3, topic: 'DBMS', question: 'Which normal form removes partial dependency?', options: ['1NF', '2NF', '3NF', 'BCNF'], answer: 1 },
-  { id: 4, topic: 'Operating System', question: 'Which scheduling algorithm gives each process a fixed time slice?', options: ['FCFS', 'SJF', 'Round Robin', 'Priority'], answer: 2 },
-  { id: 5, topic: 'Computer Networks', question: 'Which protocol is connection-oriented?', options: ['UDP', 'IP', 'TCP', 'ARP'], answer: 2 },
-  { id: 6, topic: 'Programming', question: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'function', 'define'], answer: 1 },
-  { id: 7, topic: 'Computer Fundamentals', question: 'Which component performs arithmetic and logical operations?', options: ['RAM', 'ALU', 'Cache', 'Control Bus'], answer: 1 },
-  { id: 8, topic: 'Data Structures', question: 'Which traversal visits a binary tree in Root, Left, Right order?', options: ['Inorder', 'Postorder', 'Preorder', 'Level order'], answer: 2 },
-  { id: 9, topic: 'DBMS', question: 'Which SQL command is used to remove a table completely?', options: ['DELETE', 'REMOVE', 'DROP', 'CLEAR'], answer: 2 },
-  { id: 10, topic: 'Computer Networks', question: 'How many layers are there in the OSI reference model?', options: ['5', '6', '7', '8'], answer: 2 },
+  { id: 1, topic: 'Data Structures', question: 'Which data structure is best suited for implementing recursion?', options: ['Stack', 'Queue', 'Linked List', 'Heap'], answer: 0, explanation: 'Each recursive function call is pushed onto the call stack and removed when that call returns.' },
+  { id: 2, topic: 'Data Structures', question: 'What is the time complexity of binary search on a sorted array?', options: ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'], answer: 1, explanation: 'Binary search halves the search space after every comparison, giving O(log n) time complexity.' },
+  { id: 3, topic: 'DBMS', question: 'Which normal form removes partial dependency?', options: ['1NF', '2NF', '3NF', 'BCNF'], answer: 1, explanation: 'Second Normal Form removes partial dependency of a non-key attribute on part of a composite candidate key.' },
+  { id: 4, topic: 'Operating System', question: 'Which scheduling algorithm gives each process a fixed time slice?', options: ['FCFS', 'SJF', 'Round Robin', 'Priority'], answer: 2, explanation: 'Round Robin assigns processes a fixed time quantum and cycles through the ready queue.' },
+  { id: 5, topic: 'Computer Networks', question: 'Which protocol is connection-oriented?', options: ['UDP', 'IP', 'TCP', 'ARP'], answer: 2, explanation: 'TCP establishes a connection before data transfer and provides reliable, ordered delivery.' },
+  { id: 6, topic: 'Programming', question: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'function', 'define'], answer: 1, explanation: 'let and const are block-scoped declarations in JavaScript, unlike var which is function-scoped.' },
+  { id: 7, topic: 'Computer Fundamentals', question: 'Which component performs arithmetic and logical operations?', options: ['RAM', 'ALU', 'Cache', 'Control Bus'], answer: 1, explanation: 'The Arithmetic Logic Unit (ALU) performs arithmetic calculations and logical operations inside the CPU.' },
+  { id: 8, topic: 'Data Structures', question: 'Which traversal visits a binary tree in Root, Left, Right order?', options: ['Inorder', 'Postorder', 'Preorder', 'Level order'], answer: 2, explanation: 'Preorder traversal follows Root → Left → Right, while inorder and postorder use different orders.' },
+  { id: 9, topic: 'DBMS', question: 'Which SQL command is used to remove a table completely?', options: ['DELETE', 'REMOVE', 'DROP', 'CLEAR'], answer: 2, explanation: 'DROP TABLE removes the table definition and its stored data from the database.' },
+  { id: 10, topic: 'Computer Networks', question: 'How many layers are there in the OSI reference model?', options: ['5', '6', '7', '8'], answer: 2, explanation: 'The OSI model has seven layers: Physical, Data Link, Network, Transport, Session, Presentation and Application.' },
 ]
 
 function App() {
@@ -25,6 +25,7 @@ function App() {
   const [seconds, setSeconds] = React.useState(10 * 60)
   const [submitted, setSubmitted] = React.useState(false)
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const [reviewFilter, setReviewFilter] = React.useState('all')
 
   React.useEffect(() => {
     if (!started || submitted) return
@@ -39,15 +40,61 @@ function App() {
   const question = questions[current]
   const answered = Object.keys(answers).length
   const score = questions.reduce((total, item, index) => total + (answers[index] === item.answer ? 1 : 0), 0)
+  const incorrect = questions.reduce((total, item, index) => total + (answers[index] !== undefined && answers[index] !== item.answer ? 1 : 0), 0)
+  const skipped = questions.length - answered
   const formatTime = value => `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
 
   const choose = index => setAnswers(prev => ({ ...prev, [current]: index }))
   const toggleMark = () => setMarked(prev => prev.includes(current) ? prev.filter(i => i !== current) : [...prev, current])
-  const reset = () => { setStarted(false); setCurrent(0); setAnswers({}); setMarked([]); setSeconds(600); setSubmitted(false) }
+  const reset = () => { setStarted(false); setCurrent(0); setAnswers({}); setMarked([]); setSeconds(600); setSubmitted(false); setReviewFilter('all') }
 
   if (submitted) {
     const percentage = Math.round((score / questions.length) * 100)
-    return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a></header><main className="result-page"><div className="result-card"><div className="result-kicker">QUIZ COMPLETED</div><div className="score-ring"><strong>{percentage}%</strong><span>Your score</span></div><h1>Nice work. Keep practicing.</h1><p>You answered {score} of {questions.length} questions correctly.</p><div className="result-stats"><div><strong>{score}</strong><span>Correct</span></div><div><strong>{questions.length - score}</strong><span>Incorrect</span></div><div><strong>{questions.length - answered}</strong><span>Skipped</span></div><div><strong>{formatTime(600 - seconds)}</strong><span>Time used</span></div></div><div className="result-actions"><button className="primary-btn" onClick={reset}><RotateCcw size={17} /> Try again</button><button className="secondary-btn" onClick={reset}>Back to quiz</button></div></div></main></div>
+    const performance = percentage >= 80 ? 'Excellent performance!' : percentage >= 60 ? 'Good job — keep improving.' : percentage >= 40 ? 'Nice attempt — more practice will help.' : 'Keep practicing — you will improve.'
+    const filteredQuestions = questions.filter((item, index) => {
+      if (reviewFilter === 'correct') return answers[index] === item.answer
+      if (reviewFilter === 'incorrect') return answers[index] !== undefined && answers[index] !== item.answer
+      if (reviewFilter === 'skipped') return answers[index] === undefined
+      return true
+    })
+
+    return <div className="quiz-app">
+      <header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a></header>
+      <main className="result-page">
+        <section className="result-hero">
+          <div className="result-kicker">QUIZ COMPLETED</div>
+          <div className="score-ring"><strong>{percentage}%</strong><span>Your score</span></div>
+          <h1>{performance}</h1>
+          <p>You scored <b>{score}</b> out of <b>{questions.length}</b>. Review your answers below to identify what to study next.</p>
+          <div className="result-stats">
+            <div><strong>{score}</strong><span>Correct</span></div><div><strong>{incorrect}</strong><span>Incorrect</span></div><div><strong>{skipped}</strong><span>Skipped</span></div><div><strong>{formatTime(600 - seconds)}</strong><span>Time used</span></div>
+          </div>
+          <div className="result-actions"><button className="primary-btn" onClick={reset}><RotateCcw size={17} /> Try again</button><button className="secondary-btn" onClick={reset}><ArrowLeft size={17} /> Back to quiz</button></div>
+        </section>
+
+        <section className="review-section">
+          <div className="review-heading"><div><span className="result-kicker">ANSWER REVIEW</span><h2>Review your performance</h2><p>Check every answer and understand why it is correct.</p></div></div>
+          <div className="review-tabs">
+            {[['all', 'All', questions.length], ['correct', 'Correct', score], ['incorrect', 'Incorrect', incorrect], ['skipped', 'Skipped', skipped]].map(([key, label, count]) => <button key={key} className={reviewFilter === key ? 'active' : ''} onClick={() => setReviewFilter(key)}>{label}<span>{count}</span></button>)}
+          </div>
+          <div className="review-list">
+            {filteredQuestions.map(item => {
+              const index = item.id - 1
+              const userAnswer = answers[index]
+              const isCorrect = userAnswer === item.answer
+              const isSkipped = userAnswer === undefined
+              return <article className={`review-item ${isCorrect ? 'review-correct' : isSkipped ? 'review-skipped' : 'review-incorrect'}`} key={item.id}>
+                <div className="review-item-top"><span className="review-number">Q{item.id}</span><span className="question-label">{item.topic}</span><span className="review-status">{isCorrect ? <><Check size={14} /> Correct</> : isSkipped ? <><Flag size={14} /> Skipped</> : <><X size={14} /> Incorrect</>}</span></div>
+                <h3>{item.question}</h3>
+                <div className="review-answers"><div className={isCorrect ? 'review-answer correct-answer' : 'review-answer'}><span>Your answer</span><strong>{isSkipped ? 'Not answered' : `${String.fromCharCode(65 + userAnswer)}. ${item.options[userAnswer]}`}</strong></div><div className="review-answer correct-answer"><span>Correct answer</span><strong>{String.fromCharCode(65 + item.answer)}. {item.options[item.answer]}</strong></div></div>
+                <div className="explanation"><strong>Explanation</strong><p>{item.explanation}</p></div>
+              </article>
+            })}
+          </div>
+          {!filteredQuestions.length && <div className="empty-review">No questions in this category.</div>}
+        </section>
+      </main>
+    </div>
   }
 
   if (!started) {
