@@ -1,0 +1,51 @@
+/* Premium visual layer — presentation only, no quiz logic changes */
+:root{--premium-accent:#5963e9;--premium-accent-2:#7b68ee;--premium-ink:#151923;--premium-muted:#707887;--premium-border:#e7e9f0;--premium-bg:#f7f8fc;--premium-shadow:0 18px 55px rgba(21,25,35,.08)}
+html{scroll-behavior:smooth}
+body{background:var(--premium-bg);color:var(--premium-ink)}
+::selection{background:#dfe2ff;color:#20254a}
+.navbar{backdrop-filter:blur(14px);background:rgba(255,255,255,.9)!important}
+.brand-button:focus-visible,.primary-btn:focus-visible,.secondary-btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(89,99,233,.2);outline-offset:2px}
+.home-hero,.category-hero{position:relative;overflow:hidden}
+.home-hero:after,.category-hero:after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;left:-180px;bottom:-170px;background:radial-gradient(circle,rgba(123,104,238,.08),transparent 70%);pointer-events:none}
+.hero-copy h1,.category-hero h1{letter-spacing:-.045em}
+.hero-copy p,.category-hero-copy>p{max-width:650px}
+.hero-quiz-card,.preview-card{border:1px solid rgba(231,233,240,.9)!important;background:rgba(255,255,255,.94)!important}
+.home-stats>div,.stats-row>div{border:1px solid var(--premium-border);background:rgba(255,255,255,.9);box-shadow:0 8px 28px rgba(21,25,35,.035);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.home-stats>div:hover,.stats-row>div:hover{transform:translateY(-3px);box-shadow:0 15px 35px rgba(21,25,35,.07);border-color:#d9dcf8}
+.feature-grid article{border-color:var(--premium-border)!important;background:#fff!important}
+.feature-icon,.category-icon{background:linear-gradient(145deg,#f0f1ff,#e8eaff)!important;color:var(--premium-accent)!important;border:1px solid #dde0ff}
+.home-exam,.full-mock-card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(135deg,#181c29,#24283a)!important}
+.home-exam:before,.full-mock-card:before{content:'';position:absolute;inset:auto -80px -170px auto;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(123,104,238,.28),transparent 68%);pointer-events:none}
+.home-exam>* ,.full-mock-card>*{position:relative;z-index:1}
+.mock-features span{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);padding:9px 12px;border-radius:10px}
+.category-tools{border:1px solid var(--premium-border)!important;background:rgba(255,255,255,.92)!important;box-shadow:0 12px 35px rgba(21,25,35,.045);padding:12px!important;border-radius:18px!important}
+.full-category-card{border:1px solid var(--premium-border)!important;background:#fff!important;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.full-category-card:hover{transform:translateY(-7px)!important;box-shadow:var(--premium-shadow)!important;border-color:#d5d9fb!important}
+.card-number{color:#d9dce5!important}
+.card-bottom button{font-weight:700}
+.quiz-start{background:linear-gradient(180deg,#f9faff 0,#f7f8fc 100%)}
+.difficulty-picker{border:1px solid var(--premium-border)!important;background:rgba(255,255,255,.9)!important;box-shadow:0 14px 35px rgba(21,25,35,.045)}
+.difficulty-options button{border-color:#e2e4ec!important;background:#fff!important}
+.difficulty-options button.active{border-color:#5963e9!important;background:#f0f1ff!important;box-shadow:0 8px 22px rgba(89,99,233,.12)!important}
+.preview-progress{background:#eceef4!important;height:7px!important;border-radius:99px!important;overflow:hidden}
+.preview-progress span,.progress-line span{background:linear-gradient(90deg,#5963e9,#7b68ee)!important}
+.quiz-header{background:rgba(255,255,255,.94)!important;backdrop-filter:blur(14px);border-bottom:1px solid var(--premium-border)!important}
+.question-panel,.question-sidebar{border:1px solid var(--premium-border)!important;background:#fff!important;border-radius:22px!important}
+.question-panel h1{letter-spacing:-.025em}
+.answer{border:1px solid #e3e5ec!important;background:#fff!important;border-radius:14px!important}
+.answer:hover{border-color:#cbd0ff!important;background:#fafaff!important}
+.answer.selected{border-color:#5963e9!important;background:#f1f2ff!important;box-shadow:0 0 0 3px rgba(89,99,233,.08),0 10px 25px rgba(89,99,233,.08)!important}
+.timer{border:1px solid #e1e4eb;background:#fff;padding:8px 12px;border-radius:12px;box-shadow:0 5px 16px rgba(21,25,35,.06)}
+.timer.danger{border-color:#ffd0d0!important}
+.question-grid button{border:1px solid #e1e4eb!important;background:#fff!important;border-radius:9px!important}
+.question-grid button.current{background:#5963e9!important;border-color:#5963e9!important;color:#fff!important;box-shadow:0 7px 18px rgba(89,99,233,.2)}
+.question-grid button.answered:not(.current){background:#eef0ff!important;border-color:#d7dafc!important;color:#4c55c8}
+.result-hero{border:1px solid var(--premium-border)!important;background:#fff!important;border-radius:24px!important;box-shadow:var(--premium-shadow)!important}
+.score-ring{border-color:#dfe2ff!important;background:radial-gradient(circle at 50% 40%,#fff,#f5f6ff)!important}
+.result-stats>div{border:1px solid var(--premium-border);background:#fff;border-radius:14px;box-shadow:0 7px 20px rgba(21,25,35,.035)}
+.review-tabs button{border-radius:10px!important}
+.review-item{border:1px solid var(--premium-border)!important;background:#fff!important;border-radius:18px!important}
+.explanation{background:#f7f8ff!important;border:1px solid #e4e6fa!important;border-radius:12px!important}
+@media(max-width:800px){.category-tools{padding:9px!important}.question-panel,.question-sidebar{border-radius:17px!important}.home-stats>div,.stats-row>div{min-height:74px}}
+@media(max-width:560px){.hero-copy h1,.category-hero h1{letter-spacing:-.035em}.home-exam,.full-mock-card{border-radius:20px!important}.feature-grid article{border-radius:17px!important}.category-tools{border-radius:15px!important}.result-hero{border-radius:18px!important}.answer{min-height:58px!important}.timer{padding:7px 10px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
