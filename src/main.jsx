@@ -1,113 +1,59 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import {
-  ArrowRight, Binary, Blocks, BrainCircuit, Braces, ChevronRight, Code2,
-  Cpu, Database, GitBranch, GraduationCap, Menu, Monitor, Network,
-  Search, ShieldCheck, Sparkles, X
-} from 'lucide-react'
-import { categories } from './data/categories'
+import { ArrowLeft, ArrowRight, BrainCircuit, Check, Clock3, Flag, Menu, RotateCcw, X } from 'lucide-react'
 import './styles.css'
 
-const icons = { Monitor, GitBranch, Database, Cpu, Network, Code2, Binary, Braces, Blocks, BrainCircuit, ShieldCheck, GraduationCap }
-
-function CategoryIcon({ name }) {
-  const Icon = icons[name] || BrainCircuit
-  return <Icon size={24} strokeWidth={1.8} />
-}
+const questions = [
+  { id: 1, topic: 'Data Structures', question: 'Which data structure is best suited for implementing recursion?', options: ['Stack', 'Queue', 'Linked List', 'Heap'], answer: 0 },
+  { id: 2, topic: 'Data Structures', question: 'What is the time complexity of binary search on a sorted array?', options: ['O(n)', 'O(log n)', 'O(n log n)', 'O(1)'], answer: 1 },
+  { id: 3, topic: 'DBMS', question: 'Which normal form removes partial dependency?', options: ['1NF', '2NF', '3NF', 'BCNF'], answer: 1 },
+  { id: 4, topic: 'Operating System', question: 'Which scheduling algorithm gives each process a fixed time slice?', options: ['FCFS', 'SJF', 'Round Robin', 'Priority'], answer: 2 },
+  { id: 5, topic: 'Computer Networks', question: 'Which protocol is connection-oriented?', options: ['UDP', 'IP', 'TCP', 'ARP'], answer: 2 },
+  { id: 6, topic: 'Programming', question: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'function', 'define'], answer: 1 },
+  { id: 7, topic: 'Computer Fundamentals', question: 'Which component performs arithmetic and logical operations?', options: ['RAM', 'ALU', 'Cache', 'Control Bus'], answer: 1 },
+  { id: 8, topic: 'Data Structures', question: 'Which traversal visits a binary tree in Root, Left, Right order?', options: ['Inorder', 'Postorder', 'Preorder', 'Level order'], answer: 2 },
+  { id: 9, topic: 'DBMS', question: 'Which SQL command is used to remove a table completely?', options: ['DELETE', 'REMOVE', 'DROP', 'CLEAR'], answer: 2 },
+  { id: 10, topic: 'Computer Networks', question: 'How many layers are there in the OSI reference model?', options: ['5', '6', '7', '8'], answer: 2 },
+]
 
 function App() {
+  const [started, setStarted] = React.useState(false)
+  const [current, setCurrent] = React.useState(0)
+  const [answers, setAnswers] = React.useState({})
+  const [marked, setMarked] = React.useState([])
+  const [seconds, setSeconds] = React.useState(10 * 60)
+  const [submitted, setSubmitted] = React.useState(false)
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [search, setSearch] = React.useState('')
-  const [selectedDifficulty, setSelectedDifficulty] = React.useState('All')
 
-  const filtered = categories.filter((item) => {
-    const matchesSearch = `${item.name} ${item.short}`.toLowerCase().includes(search.toLowerCase())
-    const matchesDifficulty = selectedDifficulty === 'All' || item.difficulty === selectedDifficulty || item.difficulty === 'Mixed'
-    return matchesSearch && matchesDifficulty
-  })
+  React.useEffect(() => {
+    if (!started || submitted) return
+    const timer = setInterval(() => setSeconds(value => Math.max(value - 1, 0)), 1000)
+    return () => clearInterval(timer)
+  }, [started, submitted])
 
-  return (
-    <div className="site-shell">
-      <header className="navbar">
-        <a className="brand" href="#top">
-          <span className="brand-mark"><BrainCircuit size={21} /></span>
-          <span>CS<span className="brand-accent">Quiz</span></span>
-        </a>
-        <nav className={`nav-links ${menuOpen ? 'is-open' : ''}`}>
-          <a href="#top" onClick={() => setMenuOpen(false)}>Home</a>
-          <a href="#quizzes" onClick={() => setMenuOpen(false)}>Quizzes</a>
-          <a className="active" href="#categories" onClick={() => setMenuOpen(false)}>Categories</a>
-          <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
-        </nav>
-        <div className="nav-actions">
-          <button className="icon-btn" aria-label="Search"><Search size={19} /></button>
-          <button className="login-btn">Login</button>
-          <button className="signup-btn">Get started</button>
-          <button className="mobile-menu" onClick={() => setMenuOpen(v => !v)} aria-label="Toggle menu">
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </header>
+  React.useEffect(() => {
+    if (started && seconds === 0) setSubmitted(true)
+  }, [seconds, started])
 
-      <main id="top">
-        <section className="category-hero" id="categories">
-          <div className="category-hero-copy">
-            <div className="eyebrow"><Sparkles size={14} /> 12 focused subjects</div>
-            <h1>Choose a subject.<br /><span>Start mastering it.</span></h1>
-            <p>Explore focused Computer Science quizzes built to strengthen concepts, prepare for exams and make daily practice consistent.</p>
-          </div>
-          <div className="subject-orbit" aria-hidden="true">
-            <div className="orbit orbit-one"></div><div className="orbit orbit-two"></div>
-            <div className="orbit-center"><BrainCircuit size={36} /></div>
-            <span className="orbit-chip chip-one">DSA</span><span className="orbit-chip chip-two">DBMS</span>
-            <span className="orbit-chip chip-three">OS</span><span className="orbit-chip chip-four">CN</span>
-          </div>
-        </section>
+  const question = questions[current]
+  const answered = Object.keys(answers).length
+  const score = questions.reduce((total, item, index) => total + (answers[index] === item.answer ? 1 : 0), 0)
+  const formatTime = value => `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`
 
-        <section className="stats-row">
-          <div><strong>12</strong><span>subjects</span></div>
-          <div><strong>1,105+</strong><span>questions</span></div>
-          <div><strong>3</strong><span>difficulty levels</span></div>
-          <div><strong>100%</strong><span>practice focused</span></div>
-        </section>
+  const choose = index => setAnswers(prev => ({ ...prev, [current]: index }))
+  const toggleMark = () => setMarked(prev => prev.includes(current) ? prev.filter(i => i !== current) : [...prev, current])
+  const reset = () => { setStarted(false); setCurrent(0); setAnswers({}); setMarked([]); setSeconds(600); setSubmitted(false) }
 
-        <section className="category-section" id="quizzes">
-          <div className="section-heading category-heading">
-            <div><p className="kicker">ALL CATEGORIES</p><h2>What do you want to practice?</h2></div>
-            <p className="result-count">{filtered.length} subjects</p>
-          </div>
+  if (submitted) {
+    const percentage = Math.round((score / questions.length) * 100)
+    return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a></header><main className="result-page"><div className="result-card"><div className="result-kicker">QUIZ COMPLETED</div><div className="score-ring"><strong>{percentage}%</strong><span>Your score</span></div><h1>Nice work. Keep practicing.</h1><p>You answered {score} of {questions.length} questions correctly.</p><div className="result-stats"><div><strong>{score}</strong><span>Correct</span></div><div><strong>{questions.length - score}</strong><span>Incorrect</span></div><div><strong>{questions.length - answered}</strong><span>Skipped</span></div><div><strong>{formatTime(600 - seconds)}</strong><span>Time used</span></div></div><div className="result-actions"><button className="primary-btn" onClick={reset}><RotateCcw size={17} /> Try again</button><button className="secondary-btn" onClick={reset}>Back to quiz</button></div></div></main></div>
+  }
 
-          <div className="category-tools">
-            <label className="category-search"><Search size={18} /><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search subjects..." /></label>
-            <div className="difficulty-filter">
-              {['All', 'Easy', 'Medium', 'Hard'].map(level => <button key={level} className={selectedDifficulty === level ? 'selected' : ''} onClick={() => setSelectedDifficulty(level)}>{level}</button>)}
-            </div>
-          </div>
+  if (!started) {
+    return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><nav className={menuOpen ? 'quiz-nav open' : 'quiz-nav'}><a href="#top">Home</a><a href="#quiz">Quizzes</a><a href="#about">About</a></nav><button className="quiz-menu" onClick={() => setMenuOpen(v => !v)}>{menuOpen ? <X size={21} /> : <Menu size={21} />}</button></header><main className="quiz-start" id="quiz"><div className="start-copy"><div className="eyebrow"><BrainCircuit size={15} /> Interactive practice</div><h1>Test your <span>Computer Science</span> knowledge.</h1><p>10 carefully selected questions covering DSA, DBMS, Operating Systems, Networks and Programming.</p><div className="start-details"><div><Clock3 size={18} /><span><b>10 min</b> time limit</span></div><div><Flag size={18} /><span><b>10</b> questions</span></div><div><Check size={18} /><span><b>Instant</b> results</span></div></div><button className="primary-btn large" onClick={() => setStarted(true)}>Start quiz <ArrowRight size={18} /></button></div><div className="preview-card"><div className="preview-top"><span>QUIZ PREVIEW</span><b>10 QUESTIONS</b></div><div className="preview-progress"><span></span></div><small>Question 1 of 10</small><h3>{questions[0].question}</h3>{questions[0].options.map((option, index) => <div className="preview-option" key={option}><b>{String.fromCharCode(65 + index)}</b>{option}</div>)}</div></main><section className="quiz-note" id="about"><strong>One rule:</strong> answer honestly. Your result is meant to show you what to learn next.</section></div>
+  }
 
-          <div className="full-category-grid">
-            {filtered.map((item, index) => (
-              <article className="full-category-card" key={item.id}>
-                <div className="card-top"><span className="category-icon"><CategoryIcon name={item.icon} /></span><span className={`difficulty ${item.difficulty.toLowerCase()}`}>{item.difficulty}</span></div>
-                <div className="card-number">{String(index + 1).padStart(2, '0')}</div>
-                <h3>{item.name}</h3>
-                <p>{item.description}</p>
-                <div className="card-bottom"><span>{item.count}+ questions</span><button>Start quiz <ArrowRight size={16} /></button></div>
-              </article>
-            ))}
-          </div>
-
-          {filtered.length === 0 && <div className="empty-state"><Search size={30} /><h3>No subject found</h3><p>Try a different subject or difficulty.</p></div>}
-        </section>
-
-        <section className="exam-banner" id="about">
-          <div><p className="kicker">EXAM READY</p><h2>Preparing for an exam?</h2><p>Use mixed Computer Science practice to test yourself across multiple subjects.</p></div>
-          <button>Explore exam practice <ChevronRight size={18} /></button>
-        </section>
-      </main>
-
-      <footer className="footer"><div>© 2026 CSQuiz. Built for better CS practice.</div><div><a href="#top">Home</a><a href="#categories">Categories</a><a href="#about">About</a></div></footer>
-    </div>
-  )
+  return <div className="quiz-app"><header className="quiz-header"><a className="brand" href="#top"><span className="brand-mark"><BrainCircuit size={21} /></span><span>CS<span className="brand-accent">Quiz</span></span></a><div className="live-meta"><span>Question {current + 1} / {questions.length}</span><span className={seconds < 60 ? 'timer danger' : 'timer'}><Clock3 size={16} /> {formatTime(seconds)}</span></div></header><main className="quiz-layout"><section className="question-panel"><div className="question-top"><div><span className="question-label">{question.topic}</span><p>Question {current + 1} of {questions.length}</p></div><button className={marked.includes(current) ? 'mark-btn marked' : 'mark-btn'} onClick={toggleMark}><Flag size={16} /> {marked.includes(current) ? 'Marked' : 'Mark for review'}</button></div><div className="progress-line"><span style={{ width: `${((current + 1) / questions.length) * 100}%` }}></span></div><h1>{question.question}</h1><div className="answers">{question.options.map((option, index) => <button className={answers[current] === index ? 'answer selected' : 'answer'} onClick={() => choose(index)} key={option}><span>{String.fromCharCode(65 + index)}</span><strong>{option}</strong>{answers[current] === index && <Check size={18} />}</button>)}</div><div className="question-nav"><button className="secondary-btn" disabled={current === 0} onClick={() => setCurrent(v => v - 1)}><ArrowLeft size={17} /> Previous</button>{current === questions.length - 1 ? <button className="primary-btn" onClick={() => setSubmitted(true)}>Submit quiz <Check size={17} /></button> : <button className="primary-btn" onClick={() => setCurrent(v => v + 1)}>Next question <ArrowRight size={17} /></button>}</div></section><aside className="question-sidebar"><div className="sidebar-head"><span>QUESTIONS</span><strong>{answered}/{questions.length}</strong></div><div className="question-grid">{questions.map((item, index) => <button className={`${answers[index] !== undefined ? 'answered ' : ''}${index === current ? 'current ' : ''}${marked.includes(index) ? 'review' : ''}`} onClick={() => setCurrent(index)} key={item.id}>{index + 1}</button>)}</div><div className="legend"><span><i className="dot answered-dot"></i>Answered</span><span><i className="dot review-dot"></i>Review</span><span><i className="dot"></i>Not visited</span></div><button className="submit-side" onClick={() => setSubmitted(true)}>Submit quiz</button></aside></main></div>
 }
 
 createRoot(document.getElementById('root')).render(<App />)
