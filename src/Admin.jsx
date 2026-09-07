@@ -1,6 +1,7 @@
 import React from 'react'
 import { ArrowLeft, BrainCircuit, Check, Copy, Edit3, Plus, Save, Search, Trash2, X } from 'lucide-react'
 import { categories } from './data/categories'
+import { questionBank } from './data/questionBank'
 import './admin.css'
 
 const STORAGE_KEY = 'bpsc_tre_cs_custom_questions'
@@ -11,6 +12,9 @@ const loadQuestions = () => {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] }
 }
 const saveQuestions = items => localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+const addToBank = items => { items.forEach(q => { if (!questionBank[q.subject]) questionBank[q.subject] = []; const index = questionBank[q.subject].findIndex(x => x.id === q.id); if (index >= 0) questionBank[q.subject][index] = q; else questionBank[q.subject].push(q) }) }
+const removeFromBank = id => Object.keys(questionBank).forEach(key => { questionBank[key] = questionBank[key].filter(q => q.id !== id) })
+addToBank(loadQuestions())
 
 export default function Admin({ onHome }) {
   const [questions, setQuestions] = React.useState(loadQuestions)
@@ -31,13 +35,13 @@ export default function Admin({ onHome }) {
     if (!form.question.trim() || form.options.some(o => !o.trim()) || !form.topic.trim()) return setMessage('Question, topic aur 4 options fill karein.')
     const clean = { ...form, question: form.question.trim(), topic: form.topic.trim(), options: form.options.map(o => o.trim()), explanation: form.explanation.trim() || 'Correct answer ko syllabus concept ke according review karein.' }
     const next = editingId ? questions.map(q => q.id === editingId ? { ...q, ...clean } : q) : [{ ...clean, id: `custom-${Date.now()}` }, ...questions]
-    setQuestions(next); saveQuestions(next); setMessage(editingId ? 'Question updated successfully.' : 'Question added successfully.'); resetForm()
+    setQuestions(next); saveQuestions(next); addToBank(next); setMessage(editingId ? 'Question updated successfully.' : 'Question added successfully.'); resetForm()
     setTimeout(() => setMessage(''), 2200)
   }
 
   const edit = q => { setEditingId(q.id); setForm({ ...q, options: [...q.options] }); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const remove = id => { if (!window.confirm('Is question ko delete karna hai?')) return; const next = questions.filter(q => q.id !== id); setQuestions(next); saveQuestions(next); if (editingId === id) resetForm() }
-  const duplicate = q => { const copy = { ...q, id: `custom-${Date.now()}`, question: `${q.question} (Copy)` }; const next = [copy, ...questions]; setQuestions(next); saveQuestions(next); setMessage('Question duplicated.') }
+  const remove = id => { if (!window.confirm('Is question ko delete karna hai?')) return; const next = questions.filter(q => q.id !== id); setQuestions(next); saveQuestions(next); removeFromBank(id); if (editingId === id) resetForm() }
+  const duplicate = q => { const copy = { ...q, id: `custom-${Date.now()}`, question: `${q.question} (Copy)` }; const next = [copy, ...questions]; setQuestions(next); saveQuestions(next); addToBank([copy]); setMessage('Question duplicated.') }
   const filtered = questions.filter(q => (filterSubject === 'All' || q.subject === filterSubject) && (filterDifficulty === 'All' || q.difficulty === filterDifficulty) && `${q.question} ${q.topic}`.toLowerCase().includes(search.toLowerCase()))
 
   return <div className="admin-page">
