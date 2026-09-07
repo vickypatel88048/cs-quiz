@@ -1,4 +1,5 @@
 import React from 'react'
+import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, BrainCircuit, Check, Clock3, Flag, RotateCcw, X } from 'lucide-react'
 import Home from './Home'
 import Categories from './Categories'
