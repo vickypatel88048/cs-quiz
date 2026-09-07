@@ -1,0 +1,44 @@
+/* Modern UI polish — keeps existing functionality intact */
+:root{--ui-bg:#f7f8fc;--ui-surface:#fff;--ui-text:#141821;--ui-muted:#707887;--ui-border:#e7e9ef;--ui-accent:#5963e9;--ui-accent-soft:#eef0ff;--ui-shadow:0 18px 50px rgba(20,24,33,.07)}
+body{background:var(--ui-bg)}
+button,a,input{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+.navbar,.home-navbar,.quiz-header{box-shadow:0 1px 0 rgba(20,24,33,.02)}
+.brand-mark{box-shadow:0 8px 20px rgba(20,24,33,.12)}
+.home-hero{padding-top:88px;padding-bottom:88px}
+.home-hero:before{content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,#eef0ff 0,rgba(238,240,255,.45) 38%,transparent 70%);right:-130px;top:20px;pointer-events:none}
+.home-hero,.category-hero{isolation:isolate}
+.hero-copy,.category-hero-copy{position:relative;z-index:2}
+.hero-copy h1{font-weight:700}
+.hero-copy h1 span,.category-hero h1 span{background:linear-gradient(135deg,#5963e9,#7b68ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-visual{z-index:2}
+.hero-quiz-card,.preview-card,.question-panel,.question-sidebar,.result-hero{box-shadow:var(--ui-shadow)}
+.hero-quiz-card{transform:rotate(1deg);transition:transform .25s ease,box-shadow .25s ease}
+.hero-quiz-card:hover{transform:rotate(0) translateY(-5px);box-shadow:0 28px 70px rgba(20,24,33,.12)}
+.mini-option:hover,.preview-option:hover{border-color:#cfd3ff;background:#fafaff;transform:translateX(2px)}
+.home-stats strong,.stats-row strong{color:#151a23}
+.home-features{padding-top:105px}
+.feature-grid article{position:relative;overflow:hidden;box-shadow:0 8px 25px rgba(20,24,33,.025);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.feature-grid article:after,.full-category-card:after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(89,99,233,.045),transparent 42%);opacity:0;pointer-events:none;transition:opacity .2s ease}
+.feature-grid article:hover{transform:translateY(-6px);box-shadow:0 22px 45px rgba(20,24,33,.08);border-color:#d5d8fa}
+.feature-grid article:hover:after,.full-category-card:hover:after{opacity:1}
+.feature-icon,.category-icon{box-shadow:0 8px 18px rgba(89,99,233,.08)}
+.home-exam,.full-mock-card{box-shadow:0 24px 60px rgba(20,24,33,.12)}
+.category-hero{padding-top:82px;padding-bottom:82px}
+.full-category-card{position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(20,24,33,.025)}
+.category-search:focus-within{border-color:#aeb4f7;box-shadow:0 0 0 4px rgba(89,99,233,.08)}
+.difficulty-filter button.selected{color:#5963e9;box-shadow:0 3px 12px rgba(20,24,33,.09)}
+.primary-btn:hover,.signup-btn:hover,.home-nav-cta:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(20,24,33,.13)}
+.secondary-btn:hover,.back-home:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,24,33,.06)}
+.quiz-start{padding-top:90px;padding-bottom:90px}
+.difficulty-options button:hover,.answer:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(20,24,33,.055)}
+.answer.selected{box-shadow:0 0 0 3px rgba(89,99,233,.08)}
+.question-panel h1{font-weight:700}
+.question-sidebar{box-shadow:0 14px 40px rgba(20,24,33,.055)}
+.question-grid button:hover{border-color:#c7cbf9;background:#fafaff;transform:translateY(-1px)}
+.submit-side:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(20,24,33,.14)}
+.result-hero{padding-top:50px;padding-bottom:50px}
+.score-ring{box-shadow:0 12px 35px rgba(89,99,233,.08)}
+.review-item{box-shadow:0 8px 24px rgba(20,24,33,.025);transition:transform .18s ease,box-shadow .18s ease}
+.review-item:hover{transform:translateY(-2px);box-shadow:0 15px 35px rgba(20,24,33,.07)}
+@media(max-width:800px){.home-hero,.category-hero{padding-top:58px;padding-bottom:58px}.quiz-start{padding-top:58px;padding-bottom:58px}}
+@media(max-width:560px){.home-hero:before{width:330px;height:330px;right:-170px;top:50px}.hero-quiz-card{transform:none}.hero-quiz-card:hover{transform:translateY(-3px)}.home-features{padding-top:70px}.category-hero{padding-top:40px;padding-bottom:35px}.quiz-start{padding-top:42px;padding-bottom:50px}}
