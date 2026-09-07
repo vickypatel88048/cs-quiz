@@ -2,6 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, BrainCircuit, Check, Clock3, Flag, Menu, RotateCcw, X } from 'lucide-react'
 import './styles.css'
+import './quiz.css'
 
 const questions = [
   { id: 1, topic: 'Data Structures', question: 'Which data structure is best suited for implementing recursion?', options: ['Stack', 'Queue', 'Linked List', 'Heap'], answer: 0 },
