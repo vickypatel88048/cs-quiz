@@ -7,6 +7,7 @@ import { questionBank } from './data/questionBank'
 import './styles.css'
 import './quiz.css'
 import './home.css'
+import './mobile.css'
 
 const categoryNames = {
   'computer-fundamentals': 'Computer Fundamentals',
