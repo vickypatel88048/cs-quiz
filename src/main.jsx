@@ -12,6 +12,7 @@ import './mobile.css'
 import './ui-polish.css'
 import './ui-premium.css'
 import './time-ui.css'
+import './language.css'
 
 const categoryNames = {
   'computer-fundamentals': 'Computer Fundamentals','data-structures': 'Data Structures & Algorithms','database-management': 'Database Management','operating-system': 'Operating System','computer-networks': 'Computer Networks',programming: 'Programming','computer-organization': 'Computer Organization','compiler-design': 'Compiler Design','software-engineering': 'Software Engineering','artificial-intelligence': 'Artificial Intelligence','cyber-security': 'Cyber Security','exam-practice': 'BPSC TRE Full Mock',
