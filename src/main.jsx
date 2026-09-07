@@ -8,6 +8,7 @@ import './styles.css'
 import './quiz.css'
 import './home.css'
 import './mobile.css'
+import './ui-polish.css'
 
 const categoryNames = {
   'computer-fundamentals': 'Computer Fundamentals',
