@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Database, Play, Trophy } from 'lucide-react'
+import { ArrowRight, BrainCircuit, CheckCircle2, Clock3, Database, Menu, Play, Trophy, X } from 'lucide-react'
 
 const highlights = [
   { icon: Database, title: 'TRE Computer Science Subjects', text: 'Practice DSA, DBMS, OS, Networks, Programming and other core CS topics.' },
@@ -8,11 +8,26 @@ const highlights = [
 ]
 
 export default function Home({ onStart, onCategories }) {
+  const [menuOpen, setMenuOpen] = React.useState(false)
+  const closeMenu = () => setMenuOpen(false)
+
   return <div className="home-page">
     <header className="navbar home-navbar">
-      <a className="brand" href="#home"><span className="brand-mark"><BrainCircuit size={21} /></span><span>BPSC TRE <span className="brand-accent">CS</span></span></a>
-      <nav className="home-links"><a className="active" href="#home">Home</a><button onClick={onCategories}>Subjects</button><a href="#features">Features</a><a href="#about">About</a></nav>
-      <button className="home-nav-cta" onClick={onStart}>Start Practice <ArrowRight size={16} /></button>
+      <button className="brand brand-button" onClick={() => { closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' }) }} aria-label="Go to home">
+        <span className="brand-mark"><BrainCircuit size={21} /></span><span>BPSC TRE <span className="brand-accent">CS</span></span>
+      </button>
+      <nav className={`home-links ${menuOpen ? 'is-open' : ''}`}>
+        <a className="active" href="#home" onClick={closeMenu}>Home</a>
+        <button onClick={() => { closeMenu(); onCategories() }}>Subjects</button>
+        <a href="#features" onClick={closeMenu}>Features</a>
+        <a href="#about" onClick={closeMenu}>About</a>
+      </nav>
+      <div className="home-nav-actions">
+        <button className="home-nav-cta" onClick={() => { closeMenu(); onStart() }}>Start Practice <ArrowRight size={16} /></button>
+        <button className="mobile-menu home-mobile-menu" onClick={() => setMenuOpen(v => !v)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>
+          {menuOpen ? <X size={21} /> : <Menu size={21} />}
+        </button>
+      </div>
     </header>
     <main id="home">
       <section className="home-hero">
