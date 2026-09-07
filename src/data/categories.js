@@ -10,5 +10,5 @@ export const categories = [
   { id: 'software-engineering', name: 'Software Engineering', short: 'SE', icon: 'Blocks', count: 10, difficulty: 'Easy', description: 'Review SDLC, models, testing, requirements, estimation and software quality.' },
   { id: 'artificial-intelligence', name: 'Artificial Intelligence', short: 'AI / ML', icon: 'BrainCircuit', count: 10, difficulty: 'Hard', description: 'Explore AI foundations, machine learning, search, classification and intelligent systems.' },
   { id: 'cyber-security', name: 'Cyber Security', short: 'Security', icon: 'ShieldCheck', count: 10, difficulty: 'Medium', description: 'Learn authentication, encryption, common attacks, network security and best practices.' },
-  { id: 'exam-practice', name: 'Exam Practice', short: 'Exam Prep', icon: 'GraduationCap', count: 10, difficulty: 'Mixed', description: 'Mixed practice designed for UGC NET, GATE, STET, placements and competitive exams.' },
+  { id: 'exam-practice', name: 'BPSC TRE CS Full Mock', short: 'Full Mock', icon: 'GraduationCap', count: 50, difficulty: 'Mixed', description: '50-question BPSC TRE Computer Science mock test with a 60-minute timer and −0.25 negative marking.' },
 ]
