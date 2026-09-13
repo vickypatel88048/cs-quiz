@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Exams(){return <main className="page"><div className="container"><h1>All Exams</h1><p className="muted">Exam select karke syllabus, notes, MCQ aur tests access karein.</p><div className="list">{['Bihar STET — Computer Science','BPSC — General Studies','TRE — Teacher Recruitment','BTET — Teacher Eligibility'].map(x=><Link className="row" href="/notes" key={x}><div><strong>{x}</strong><span>Subjects • Chapters • Notes • MCQ • Mock Tests</span></div><span>Open →</span></Link>)}</div></div></main>}
