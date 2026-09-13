@@ -1,0 +1,1 @@
+export default function Footer(){return <footer className="footer"><div className="container"><h3>BiharExam</h3><p>Jobs, exams, notes, MCQs aur mock tests — Bihar students ke liye ek simple preparation platform.</p><p>© 2026 BiharExam Super App • MVP</p></div></footer>}
