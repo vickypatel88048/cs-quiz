@@ -1,0 +1,12 @@
+export type Question = { id: number; exam: string; chapter: string; difficulty: 'Easy' | 'Medium' | 'Hard'; question: string; options: string[]; answer: number; explanation: string };
+
+export const questions: Question[] = [
+  { id: 1, exam: 'Bihar STET Computer Science', chapter: 'Digital Logic', difficulty: 'Easy', question: 'Which logic gate gives output 1 only when all inputs are 1?', options: ['OR', 'AND', 'XOR', 'NOT'], answer: 1, explanation: 'The AND gate produces 1 only when every input is 1.' },
+  { id: 2, exam: 'Bihar STET Computer Science', chapter: 'Digital Logic', difficulty: 'Easy', question: 'What is the hexadecimal representation of binary 1111?', options: ['A', 'E', 'F', '10'], answer: 2, explanation: '1111 in binary equals 15 in decimal, which is F in hexadecimal.' },
+  { id: 3, exam: 'Bihar STET Computer Science', chapter: 'Digital Logic', difficulty: 'Medium', question: 'Which gate is known as a universal gate?', options: ['AND', 'OR', 'NAND', 'XOR'], answer: 2, explanation: 'NAND can be used to construct NOT, AND and OR gates, so it is universal.' },
+  { id: 4, exam: 'Bihar STET Computer Science', chapter: 'Computer Fundamentals', difficulty: 'Easy', question: 'Which memory is volatile?', options: ['ROM', 'RAM', 'SSD', 'Hard Disk'], answer: 1, explanation: 'RAM loses its stored data when power is removed.' },
+  { id: 5, exam: 'Bihar STET Computer Science', chapter: 'Operating System', difficulty: 'Medium', question: 'Which scheduling algorithm uses a fixed time slice?', options: ['FCFS', 'Round Robin', 'SJF', 'Priority'], answer: 1, explanation: 'Round Robin assigns each ready process a fixed time quantum.' },
+  { id: 6, exam: 'Bihar STET Computer Science', chapter: 'DBMS', difficulty: 'Easy', question: 'Which key uniquely identifies a row in a relational table?', options: ['Foreign key', 'Primary key', 'Candidate value', 'Composite value'], answer: 1, explanation: 'A primary key uniquely identifies each record in a table.' },
+  { id: 7, exam: 'Bihar STET Computer Science', chapter: 'Computer Networks', difficulty: 'Medium', question: 'Which protocol is connection-oriented?', options: ['UDP', 'IP', 'TCP', 'ARP'], answer: 2, explanation: 'TCP establishes a connection before reliable data transfer.' },
+  { id: 8, exam: 'Bihar STET Computer Science', chapter: 'Data Structures', difficulty: 'Medium', question: 'Which data structure follows LIFO?', options: ['Queue', 'Stack', 'Linked List', 'Tree'], answer: 1, explanation: 'Stack follows Last In, First Out (LIFO).' },
+];
